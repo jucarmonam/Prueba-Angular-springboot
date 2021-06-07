@@ -3,7 +3,6 @@ package valid.register.registermanager.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import valid.register.registermanager.exception.RegisterNotFoundException;
 import valid.register.registermanager.model.Register;
 import valid.register.registermanager.service.RegisterService;
 
@@ -21,14 +20,22 @@ public class RegisterController {
     @GetMapping("/all")
     public ResponseEntity<List<Register>> getAllRegisters(){
         List<Register> registers = registerService.findAllRegisters();
-        //return new ResponseEntity<>(registers, HttpStatus.OK);
         return ResponseEntity.ok(registers);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Register> addRegister(@RequestBody Register register){
-        Register newRegister = registerService.addRegister(new Register(register.getName(), register.getLastname(), false));
-        return new ResponseEntity<>(newRegister, HttpStatus.CREATED);
+    public ResponseEntity<Object> addRegister(@RequestBody Register register){
+        try{
+            if(!register.getName().equals("") && !register.getLastname().equals("")){
+                Register newRegister = registerService.addRegister(new Register(register.getName(), register.getLastname(), false));
+                return new ResponseEntity<>(newRegister, HttpStatus.CREATED);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Los campos no pueden ir vacios");
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Todos los campos son obligatorios");
+        }
+
     }
 
     @PutMapping("/update")
@@ -38,7 +45,7 @@ public class RegisterController {
                 registerService.findRegisterById(register.getId());
             }
             registerService.processRegister(registers);
-            return ResponseEntity.status(HttpStatus.OK).body("Registros procesados correctamente");
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch(Exception handlerException){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(handlerException.getMessage());
         }

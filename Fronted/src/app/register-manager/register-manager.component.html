@@ -1,0 +1,62 @@
+<div class="container" id="main-container">
+  <div class="row">
+    <div *ngFor="let register of registers" class="col-md-7 col-xl-3 m-3">
+      <div class="card m-b-31" style="height: 85%">
+        <div class="card-body row">
+          <div class="col-13 card-title align-self-center mb-0">
+            <h4 class="m-1 pl-2">Nombre: {{ register?.name }}</h4>
+            <p class="m-1 pl-2">Apellido: {{ register?.lastname }}</p>
+          </div>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li
+            [ngStyle]="{
+              'background-color':
+                register?.processed === true ? '#A9D08E' : '#E3764B'
+            }"
+            class="list-group-item"
+          >
+            <div *ngIf="register?.processed === true; else elseBlock">
+              <i class="float-right"></i>Estado: Procesado
+            </div>
+
+            <ng-template #elseBlock
+              ><i #elseBlock class="float-right"></i>Estado: Sin
+              procesar</ng-template
+            >
+          </li>
+        </ul>
+        <div *ngIf="register?.processed === false" class="card-body">
+          <div class="float-right btn-group btn-group-sm">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value="register"
+              id="flexCheckDefault"
+              (change)="processSelected($event, register)"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Procesar
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="registers?.length != 0" class="d-grid gap-3 col-1 mx-auto mb-4">
+  <button
+    (click)="processClicked()"
+    class="btn btn-success btn-lg"
+    type="button"
+  >
+    Procesar
+  </button>
+</div>
+<!-- Notification for no Registers -->
+<div *ngIf="registers?.length == 0" class="col-lg-13 col-md-12 col-xl-12">
+  <div class="alert alert-info" role="alert">
+    <h3 class="alert-heading">NO HAY REGISTROS!</h3>
+    <p>No se encontro ningun Registro.</p>
+  </div>
+</div>

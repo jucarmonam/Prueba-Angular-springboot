@@ -23,10 +23,10 @@ export class RegisterService {
     );
   }
 
-  public processRegister(register: Register): Observable<Register> {
-    return this.http.put<Register>(
+  public processRegister(registers: Register[]): Observable<void> {
+    return this.http.put<void>(
       `${this.apiServerUrl}/register/update`,
-      register
+      registers
     );
   }
 }
